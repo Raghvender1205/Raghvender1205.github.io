@@ -2,9 +2,11 @@
 // The portfolio drawn as a small neural network. Each layer holds the children of the node
 // selected in the layer before it, and the "output" panel shows the selected node.
 import { icon } from '../lib/icons';
-import { buildNetwork, iconNames, type NetNode } from '../lib/network';
+import Icon from './Icon.astro';
+import { buildNetwork, buildTour, iconNames, type NetNode } from '../lib/network';
 
 const network = await buildNetwork();
+const tour = await buildTour(network);
 const icons = Object.fromEntries(
   [...iconNames(network), 'caret-right', 'arrow-right', 'arrow-up-right'].map((name) => [name, icon(name)]),
 );
@@ -12,6 +14,28 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
 ---
 
 <section class="net" aria-label="Portfolio network">
+  <div class="net-bar">
+    <p class="label">Select a node to move through the network. Arrow keys work too.</p>
+    <div class="net-tour">
+      <button type="button" class="net-btn" data-tour-start>
+        <Icon name="play" class="size-3" />
+        Forward pass
+      </button>
+      <div class="net-tour-steps" data-tour-steps hidden>
+        <button type="button" class="net-btn" data-tour-prev aria-label="Previous step">
+          <Icon name="arrow-left" class="size-3" />
+        </button>
+        <span class="label" data-tour-count aria-live="polite"></span>
+        <button type="button" class="net-btn" data-tour-next>
+          <span data-tour-next-label>Next</span>
+          <Icon name="arrow-right" class="size-3" />
+        </button>
+        <button type="button" class="net-btn" data-tour-stop aria-label="End the forward pass">
+          <Icon name="x" class="size-3" />
+        </button>
+      </div>
+    </div>
+  </div>
   <div class="net-stage" data-net-stage>
     <div class="net-canvas" data-net-canvas>
       <svg class="net-edges" data-net-edges aria-hidden="true"></svg>
@@ -36,6 +60,7 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
 
   <script type="application/json" data-net-data set:html={json(network)} />
   <script type="application/json" data-net-icons set:html={json(icons)} />
+  <script type="application/json" data-net-tour set:html={json(tour)} />
 </section>
 
 <script>
@@ -63,6 +88,7 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
 
   const root: NetNode = read('[data-net-data]');
   const icons: Record<string, string> = read('[data-net-icons]');
+  const tour: string[][] = read('[data-net-tour]');
   const stage = document.querySelector<HTMLElement>('[data-net-stage]')!;
   const canvas = document.querySelector<HTMLElement>('[data-net-canvas]')!;
   const edges = document.querySelector<SVGSVGElement>('[data-net-edges]')!;
@@ -89,8 +115,7 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
     return span;
   }
 
-  function pathFromHash(): NetNode[] {
-    const ids = decodeURIComponent(location.hash.replace(/^#\/?/, '')).split('/').filter(Boolean);
+  function pathFromIds(ids: string[]): NetNode[] {
     const found = [root];
     for (const id of ids) {
       const next = found[found.length - 1].children?.find((child) => child.id === id);
@@ -99,6 +124,12 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
     }
     return found;
   }
+
+  const pathFromHash = () =>
+    pathFromIds(decodeURIComponent(location.hash.replace(/^#\/?/, '')).split('/').filter(Boolean));
+
+  // Below the tablet breakpoint the layers stack top to bottom instead of left to right.
+  const stacked = () => getComputedStyle(canvas).flexDirection === 'column';
 
   function renderLayers(newLayer: boolean) {
     canvas.querySelectorAll('.net-col').forEach((col) => col.remove());
@@ -189,6 +220,7 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
     const origin = canvas.getBoundingClientRect();
     const cols = [...canvas.querySelectorAll<HTMLElement>('.net-col')];
     const strong: SVGLineElement[] = [];
+    const vertical = stacked();
 
     for (let depth = 0; depth < cols.length - 1; depth++) {
       const sources = cols[depth].querySelectorAll<HTMLElement>('.net-node');
@@ -196,13 +228,18 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
       for (const source of sources) {
         const from = source.getBoundingClientRect();
         const fromSelected = source.hasAttribute('aria-current');
+        // Stacked layers only show the connections leaving the selected node.
+        if (vertical && !fromSelected) continue;
         for (const target of targets) {
           const to = target.getBoundingClientRect();
           const line = document.createElementNS(SVG_NS, 'line');
-          line.setAttribute('x1', String(from.right - origin.left));
-          line.setAttribute('y1', String(from.top + from.height / 2 - origin.top));
-          line.setAttribute('x2', String(to.left - origin.left));
-          line.setAttribute('y2', String(to.top + to.height / 2 - origin.top));
+          const [x1, y1, x2, y2] = vertical
+            ? [from.left + from.width / 2, from.bottom, to.left + to.width / 2, to.top]
+            : [from.right, from.top + from.height / 2, to.left, to.top + to.height / 2];
+          line.setAttribute('x1', String(x1 - origin.left));
+          line.setAttribute('y1', String(y1 - origin.top));
+          line.setAttribute('x2', String(x2 - origin.left));
+          line.setAttribute('y2', String(y2 - origin.top));
           line.setAttribute('class', 'net-edge');
           if (fromSelected) {
             line.classList.add(target.hasAttribute('aria-current') ? 'is-path' : 'is-fan');
@@ -229,15 +266,75 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
     canvas.querySelector<HTMLElement>(`.net-node[data-depth="${depth}"][data-id="${CSS.escape(id)}"]`)?.focus();
   }
 
-  function select(depth: number, node: NetNode) {
-    path = [...path.slice(0, depth), node];
+  function syncHash() {
     const hash = path.slice(1).map((step) => step.id).join('/');
     history.replaceState(null, '', hash ? `#/${hash}` : location.pathname + location.search);
+  }
+
+  // Bring what just changed into view: the newest layer, or the output once a leaf is reached.
+  function reveal() {
+    const behavior = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+    if (stacked()) {
+      const last = path[path.length - 1];
+      const target = hasChildren(last) ? canvas.querySelector('.net-col:last-of-type') : output;
+      target?.scrollIntoView({ behavior, block: 'nearest' });
+    } else {
+      stage.scrollTo({ left: stage.scrollWidth, behavior });
+    }
+  }
+
+  function select(depth: number, node: NetNode) {
+    endTour();
+    path = [...path.slice(0, depth), node];
+    syncHash();
     render(hasChildren(node));
     focusNode(depth, node.id);
-    // On narrow screens, bring the newest layer into view.
-    stage.scrollTo({ left: stage.scrollWidth, behavior: 'smooth' });
+    reveal();
   }
+
+  // The forward pass steps through a fixed route; choosing any node yourself ends it.
+  const tourStart = document.querySelector<HTMLElement>('[data-tour-start]')!;
+  const tourSteps = document.querySelector<HTMLElement>('[data-tour-steps]')!;
+  const tourCount = document.querySelector<HTMLElement>('[data-tour-count]')!;
+  const tourPrev = document.querySelector<HTMLButtonElement>('[data-tour-prev]')!;
+  const tourNext = document.querySelector<HTMLElement>('[data-tour-next]')!;
+  const tourNextLabel = document.querySelector<HTMLElement>('[data-tour-next-label]')!;
+  let tourStep = -1;
+
+  function showTourStep(step: number) {
+    tourStep = step;
+    path = pathFromIds(tour[step]);
+    syncHash();
+    render(true);
+    tourStart.hidden = true;
+    tourSteps.hidden = false;
+    tourCount.textContent = `Step ${step + 1} of ${tour.length}`;
+    tourPrev.disabled = step === 0;
+    tourNextLabel.textContent = step === tour.length - 1 ? 'Finish' : 'Next';
+    reveal();
+  }
+
+  function endTour() {
+    if (tourStep < 0) return;
+    tourStep = -1;
+    tourSteps.hidden = true;
+    tourStart.hidden = false;
+  }
+
+  tourStart.addEventListener('click', () => {
+    showTourStep(0);
+    tourNext.focus();
+  });
+  tourPrev.addEventListener('click', () => showTourStep(Math.max(0, tourStep - 1)));
+  tourNext.addEventListener('click', () => {
+    if (tourStep < tour.length - 1) return showTourStep(tourStep + 1);
+    endTour();
+    tourStart.focus();
+  });
+  document.querySelector('[data-tour-stop]')!.addEventListener('click', () => {
+    endTour();
+    tourStart.focus();
+  });
 
   // Arrow keys: up and down within a layer, right into the next layer, left back to the previous one.
   canvas.addEventListener('keydown', (event) => {
@@ -289,6 +386,46 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
       position: sticky;
       top: 1.5rem;
     }
+  }
+
+  .net-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    grid-column: 1 / -1;
+  }
+
+  .net-tour-steps {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .net-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.25rem;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    background: var(--surface);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 150ms;
+  }
+
+  .net-btn:hover:not(:disabled) {
+    border-color: var(--muted);
+  }
+
+  .net-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
   }
 
   .net-stage {
@@ -509,6 +646,43 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
     margin-top: 1rem;
     font-size: 0.8125rem;
     color: var(--muted);
+  }
+
+  /* Phones: layers stack top to bottom, two nodes to a row, and the page scrolls normally. */
+  @media (max-width: 47.99rem) {
+    .net-stage {
+      overflow-x: visible;
+    }
+
+    .net-canvas {
+      flex-direction: column;
+      gap: 2.75rem;
+      width: auto;
+      min-width: 0;
+      min-height: 0;
+      padding: 1rem;
+    }
+
+    .net-col {
+      width: 100%;
+    }
+
+    .net-nodes {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .net-nodes:has(li:only-child) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .net-node-more {
+      transform: rotate(90deg);
+    }
+
+    .net-output {
+      min-height: 0;
+    }
   }
 
   .net-fallback {

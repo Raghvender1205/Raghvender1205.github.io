@@ -231,6 +231,33 @@ export async function buildNetwork(): Promise<NetNode> {
   };
 }
 
+// The "forward pass": a short guided route for a reader with thirty seconds.
+// Who I am, my current role, the first featured project, then how to reach me.
+export async function buildTour(root: NetNode): Promise<string[][]> {
+  const find = (node: NetNode, id: string): string[] | undefined => {
+    for (const child of node.children ?? []) {
+      if (child.id === id) return [child.id];
+      const rest = find(child, id);
+      if (rest) return [child.id, ...rest];
+    }
+    return undefined;
+  };
+  const branch = (id: string) => root.children?.find((child) => child.id === id);
+
+  const steps: string[][] = [[]];
+
+  const currentRole = branch('background')?.children?.[0];
+  if (currentRole) steps.push(['background', currentRole.id]);
+
+  const featured = (await getProjects()).find((project) => project.data.featured);
+  const projects = branch('projects');
+  const toFeatured = featured && projects && find(projects, featured.id);
+  if (toFeatured) steps.push(['projects', ...toFeatured]);
+
+  if (branch('contact')) steps.push(['contact']);
+  return steps;
+}
+
 // Every icon name the network uses, so the page can inline just those.
 export function iconNames(node: NetNode, names = new Set<string>()): Set<string> {
   names.add(node.icon);
