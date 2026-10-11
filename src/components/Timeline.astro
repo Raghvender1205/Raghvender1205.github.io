@@ -1,0 +1,33 @@
+---
+import { experience } from '../data/experience';
+
+interface Props {
+  // Number of highlights to show per role. Omit to show all.
+  limit?: number;
+}
+
+const { limit } = Astro.props;
+---
+
+<ol>
+  {
+    experience.map((role) => (
+      <li class="grid gap-x-8 gap-y-1 border-t border-rule py-5 sm:grid-cols-[9rem_1fr]">
+        <p class="label sm:pt-1.5">
+          {role.start} – {role.end}
+        </p>
+        <div>
+          <h3 class="text-xl font-semibold leading-snug tracking-tight">
+            {role.title}
+            <span class="font-normal italic text-muted">, {role.org}</span>
+          </h3>
+          <ul class="mt-2 list-disc space-y-1 pl-5 marker:text-rule">
+            {role.highlights.slice(0, limit).map((highlight) => (
+              <li>{highlight}</li>
+            ))}
+          </ul>
+        </div>
+      </li>
+    ))
+  }
+</ol>

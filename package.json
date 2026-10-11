@@ -1,0 +1,33 @@
+{
+  "name": "raghvender-portfolio",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Raghvender1205/Raghvender1205.github.io.git"
+  },
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Raghvender1205/Raghvender1205.github.io/issues"
+  },
+  "homepage": "https://github.com/Raghvender1205/Raghvender1205.github.io#readme",
+  "dependencies": {
+    "@astrojs/markdown-remark": "^7.3.2",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "@tailwindcss/typography": "^0.5.20",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.3.8",
+    "katex": "^0.19.0",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
+    "tailwindcss": "^4.3.3"
+  },
+  "private": true
+}

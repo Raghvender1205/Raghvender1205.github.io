@@ -1,0 +1,46 @@
+---
+import { site } from '../data/site';
+import { formatMonth } from '../lib/content';
+import { getLanguageCounts, getRepos } from '../lib/github';
+
+const repos = await getRepos();
+const recent = repos.slice(0, 6);
+const languages = await getLanguageCounts();
+---
+
+{
+  repos.length === 0 ? (
+    <p class="italic text-muted">
+      See <a class="link" href={`https://github.com/${site.githubUser}`}>github.com/{site.githubUser}</a>.
+    </p>
+  ) : (
+    <div class="grid gap-x-12 gap-y-8 md:grid-cols-[1fr_15rem]">
+      <div>
+        <p class="label mb-1">Recently active</p>
+        <ul>
+          {recent.map((repo) => (
+            <li class="flex flex-wrap items-baseline justify-between gap-x-6 border-t border-rule py-3">
+              <a class="link font-semibold" href={repo.url} rel="noopener">{repo.name}</a>
+              <span class="label">
+                {repo.language && `${repo.language} · `}
+                {formatMonth(repo.pushedAt)}
+              </span>
+              {repo.description && <p class="w-full text-muted">{repo.description}</p>}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <p class="label mb-1">{repos.length} public repositories, by language</p>
+        <ul>
+          {languages.map(({ language, count }) => (
+            <li class="flex items-baseline justify-between border-t border-rule py-3">
+              <span>{language}</span>
+              <span class="label">{count}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  )
+}

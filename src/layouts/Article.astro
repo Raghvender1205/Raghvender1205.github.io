@@ -1,0 +1,33 @@
+---
+// Shared layout for anything written in Markdown: blog posts, notes, maths and project case studies.
+import 'katex/dist/katex.min.css';
+import Base from './Base.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  kicker: string;
+  back: { label: string; href: string };
+}
+
+const { title, description, kicker, back } = Astro.props;
+---
+
+<Base title={title} description={description}>
+  <article class="mx-auto max-w-[70ch] pt-12">
+    <header class="border-b border-rule pb-8">
+      <p class="label">{kicker}</p>
+      <h1 class="mt-3 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">{title}</h1>
+      <p class="mt-4 text-xl italic leading-snug text-muted">{description}</p>
+      <div class="mt-6 flex flex-wrap gap-x-6 gap-y-2">
+        <slot name="meta" />
+      </div>
+    </header>
+    <div class="prose mt-10">
+      <slot />
+    </div>
+    <footer class="mt-16 border-t border-rule pt-6">
+      <a class="label link" href={back.href}>← {back.label}</a>
+    </footer>
+  </article>
+</Base>

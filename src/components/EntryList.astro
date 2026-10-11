@@ -1,0 +1,40 @@
+---
+import { sections } from '../data/site';
+import { formatDate, writingHref, type WritingEntry } from '../lib/content';
+
+interface Props {
+  entries: WritingEntry[];
+  // Show which section each entry belongs to (for mixed lists).
+  showSection?: boolean;
+  empty?: string;
+}
+
+const { entries, showSection = false, empty = 'Nothing published here yet.' } = Astro.props;
+---
+
+{
+  entries.length === 0 ? (
+    <p class="italic text-muted">{empty}</p>
+  ) : (
+    <ul>
+      {entries.map((entry) => (
+        <li class="grid gap-x-8 gap-y-1 border-t border-rule py-5 sm:grid-cols-[9rem_1fr]">
+          <p class="label sm:pt-1.5">
+            <time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
+            {showSection && <span class="block">{sections[entry.section].label}</span>}
+          </p>
+          <div>
+            <h3 class="text-xl font-semibold leading-snug tracking-tight">
+              <a class="link" href={writingHref(entry)} rel={entry.data.external ? 'noopener' : undefined}>
+                {entry.data.title}
+                {entry.data.external && ' ↗'}
+              </a>
+              {entry.data.draft && <span class="label ml-2 text-accent">Draft</span>}
+            </h3>
+            <p class="mt-1 text-muted">{entry.data.description}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  )
+}

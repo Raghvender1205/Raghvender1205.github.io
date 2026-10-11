@@ -1,0 +1,44 @@
+---
+import { hasBody, formatMonth, type ProjectEntry } from '../lib/content';
+import { getRepo } from '../lib/github';
+
+interface Props {
+  project: ProjectEntry;
+}
+
+const { project } = Astro.props;
+const { title, summary, stack, repo, demo, paper } = project.data;
+const github = await getRepo(repo);
+const caseStudy = hasBody(project) ? `/projects/${project.id}/` : undefined;
+const repoUrl = repo ? `https://github.com/${repo}` : undefined;
+---
+
+<article class="flex flex-col border-t border-rule pt-5">
+  <h3 class="text-xl font-semibold leading-snug tracking-tight">
+    {caseStudy ? <a class="link" href={caseStudy}>{title}</a> : title}
+  </h3>
+  <p class="mt-2 text-muted">{summary}</p>
+
+  {
+    stack.length > 0 && (
+      <ul class="label mt-4 flex flex-wrap gap-x-3 gap-y-1" aria-label="Built with">
+        {stack.map((item) => <li>{item}</li>)}
+      </ul>
+    )
+  }
+
+  <div class="label mt-4 flex flex-wrap items-baseline gap-x-5 gap-y-1">
+    {caseStudy && <a class="link py-1" href={caseStudy}>Case study →</a>}
+    {repoUrl && <a class="link py-1" href={repoUrl} rel="noopener">Code ↗</a>}
+    {demo && <a class="link py-1" href={demo} rel="noopener">Demo ↗</a>}
+    {paper && <a class="link py-1" href={paper} rel="noopener">Paper ↗</a>}
+    {
+      github && (
+        <span class="py-1">
+          {github.stars > 0 && `★ ${github.stars} · `}
+          updated {formatMonth(github.pushedAt)}
+        </span>
+      )
+    }
+  </div>
+</article>

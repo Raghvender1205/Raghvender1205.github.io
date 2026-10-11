@@ -1,0 +1,43 @@
+---
+// One page per Markdown file in src/content/blog, notes and maths.
+import { render } from 'astro:content';
+import Article from '../../layouts/Article.astro';
+import { sections } from '../../data/site';
+import { formatDate, getWriting, type WritingEntry } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const entries = await getWriting();
+  return entries
+    .filter((entry) => !entry.data.external)
+    .map((entry) => ({
+      params: { section: entry.section, slug: entry.id },
+      props: { entry },
+    }));
+}
+
+interface Props {
+  entry: WritingEntry;
+}
+
+const { entry } = Astro.props;
+const { title, description, date, updated, tags, source } = entry.data;
+const section = sections[entry.section];
+const { Content } = await render(entry);
+---
+
+<Article
+  title={title}
+  description={description}
+  kicker={section.label}
+  back={{ label: `All ${section.label.toLowerCase()}`, href: `/${entry.section}/` }}
+>
+  <Fragment slot="meta">
+    <p class="label">
+      <time datetime={date.toISOString()}>{formatDate(date)}</time>
+      {updated && ` · updated ${formatDate(updated)}`}
+    </p>
+    {tags.length > 0 && <p class="label">{tags.join(' · ')}</p>}
+    {source && <a class="label link" href={source.url} rel="noopener">Source: {source.title} ↗</a>}
+  </Fragment>
+  <Content />
+</Article>

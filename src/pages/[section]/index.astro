@@ -1,0 +1,26 @@
+---
+// Listing page for each writing section: /blog/, /notes/ and /maths/.
+import Base from '../../layouts/Base.astro';
+import EntryList from '../../components/EntryList.astro';
+import { sections, type SectionKey } from '../../data/site';
+import { getSection } from '../../lib/content';
+
+export function getStaticPaths() {
+  return Object.keys(sections).map((section) => ({ params: { section } }));
+}
+
+const key = Astro.params.section as SectionKey;
+const { label, blurb } = sections[key];
+const entries = await getSection(key);
+---
+
+<Base title={label} description={blurb}>
+  <header class="max-w-[70ch] pt-12">
+    <p class="label">Writing</p>
+    <h1 class="mt-3 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">{label}</h1>
+    <p class="mt-4 text-xl italic text-muted">{blurb}</p>
+  </header>
+  <div class="mt-12">
+    <EntryList entries={entries} />
+  </div>
+</Base>

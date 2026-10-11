@@ -1,0 +1,64 @@
+---
+import Base from '../layouts/Base.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Timeline from '../components/Timeline.astro';
+import { profile } from '../data/site';
+import { education, publications } from '../data/experience';
+---
+
+<Base title="About" description={`Work history, education and publications of ${profile.name}.`}>
+  <header class="max-w-[70ch] pt-12">
+    <p class="label">About</p>
+    <h1 class="mt-3 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">{profile.name}</h1>
+    <p class="mt-2 text-xl italic text-muted">{profile.role}, {profile.company} · {profile.location}</p>
+    {profile.intro.map((paragraph) => <p class="mt-5 text-lg leading-relaxed">{paragraph}</p>)}
+    <ul class="mt-6 flex flex-wrap gap-x-6 gap-y-2">
+      <li><a class="link font-semibold" href={`mailto:${profile.email}`}>{profile.email}</a></li>
+      {profile.resumeUrl && <li><a class="link" href={profile.resumeUrl}>Resume (PDF)</a></li>}
+      {
+        profile.links.map((link) => (
+          <li><a class="link" href={link.href} rel="me noopener">{link.label} ↗</a></li>
+        ))
+      }
+    </ul>
+  </header>
+
+  <section class="mt-16">
+    <SectionHeading title="Experience" />
+    <Timeline />
+  </section>
+
+  <section class="mt-16">
+    <SectionHeading title="Publications" />
+    <ul>
+      {
+        publications.map((paper) => (
+          <li class="grid gap-x-8 gap-y-1 border-t border-rule py-5 sm:grid-cols-[9rem_1fr]">
+            <p class="label sm:pt-1.5">{paper.year}</p>
+            <p class="text-xl">
+              <a class="link font-semibold" href={paper.url} rel="noopener">{paper.title} ↗</a>
+              <span class="italic text-muted">, {paper.venue}</span>
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="mt-16">
+    <SectionHeading title="Education" />
+    <ul>
+      {
+        education.map((item) => (
+          <li class="grid gap-x-8 gap-y-1 border-t border-rule py-5 sm:grid-cols-[9rem_1fr]">
+            <p class="label sm:pt-1.5">{item.start} – {item.end}</p>
+            <p class="text-xl">
+              <span class="font-semibold">{item.degree}</span>
+              <span class="italic text-muted">, {item.school}</span>
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Base>

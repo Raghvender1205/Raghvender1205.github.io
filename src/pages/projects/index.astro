@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { projectGroups, type ProjectGroupKey } from '../../data/site';
+import { getProjects } from '../../lib/content';
+
+const projects = await getProjects();
+const groups = (Object.keys(projectGroups) as ProjectGroupKey[])
+  .map((key) => ({
+    ...projectGroups[key],
+    projects: projects.filter((project) => project.data.group === key),
+  }))
+  .filter((group) => group.projects.length > 0);
+---
+
+<Base title="Projects" description="Projects by Raghvender: ML systems, LLM tooling, ML from scratch, and systems in Rust and Go.">
+  <header class="max-w-[70ch] pt-12">
+    <p class="label">Projects</p>
+    <h1 class="mt-3 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">Things I have built</h1>
+    <p class="mt-4 text-xl italic text-muted">
+      Mostly built to understand how something works. Titles with a link have a full write-up.
+    </p>
+  </header>
+
+  {
+    groups.map((group) => (
+      <section class="mt-16">
+        <SectionHeading title={group.label} />
+        <p class="-mt-4 mb-8 max-w-[70ch] text-muted">{group.blurb}</p>
+        <div class="grid gap-x-12 gap-y-8 md:grid-cols-2">
+          {group.projects.map((project) => <ProjectCard project={project} />)}
+        </div>
+      </section>
+    ))
+  }
+</Base>
