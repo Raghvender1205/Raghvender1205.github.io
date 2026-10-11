@@ -60,7 +60,7 @@ export const profile = {
   name: 'Raghvender',
   role: 'Machine Learning Engineer II',
   company: 'HealthKart',
-  location: 'Chandigarh, India',
+  location: 'Gurgaon, Haryana, India',
   email: 'raghvender1205@gmail.com',
   // Path or URL of a resume PDF, e.g. '/resume.pdf' for a file in public/. Leave empty to hide the link.
   resumeUrl: '',
