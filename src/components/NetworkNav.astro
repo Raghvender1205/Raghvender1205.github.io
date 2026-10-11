@@ -48,6 +48,7 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
     id: string;
     label: string;
     icon: string;
+    color?: string;
     title: string;
     meta?: string;
     text?: string[];
@@ -71,6 +72,9 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
   let path: NetNode[] = [root];
 
   const hasChildren = (node: NetNode) => Boolean(node.children?.length);
+
+  // Top-level branches carry a category colour, and everything beneath one inherits it.
+  const colorVar = (node: NetNode | undefined) => (node?.color ? `var(--cat-${node.color})` : '');
 
   function el<K extends keyof HTMLElementTagNameMap>(tag: K, className?: string, text?: string) {
     const node = document.createElement(tag);
@@ -114,6 +118,8 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
         button.type = 'button';
         button.dataset.depth = String(depth);
         button.dataset.id = node.id;
+        const color = colorVar(depth === 1 ? node : path[1]);
+        if (color && depth > 0) button.style.setProperty('--node-color', color);
         if (selected) button.setAttribute('aria-current', 'true');
         if (hasChildren(node)) button.setAttribute('aria-expanded', String(selected));
         button.append(iconEl(node.icon, 'net-node-icon'), el('span', 'net-node-label', node.label));
@@ -132,8 +138,9 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
   function renderOutput() {
     const node = path[path.length - 1];
     output.replaceChildren();
+    output.style.setProperty('--node-color', colorVar(path[1]) || 'var(--muted)');
 
-    output.append(el('p', 'label', `Output · ${path.map((step) => step.label).join(' / ')}`));
+    output.append(el('p', 'label net-output-kicker', `Output · ${path.map((step) => step.label).join(' / ')}`));
     output.append(el('h2', 'net-output-title', node.title));
     if (node.meta) output.append(el('p', 'net-output-meta', node.meta));
     for (const paragraph of node.text ?? []) output.append(el('p', 'net-output-text', paragraph));
@@ -212,6 +219,7 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
   }
 
   function render(newLayer = false) {
+    canvas.style.setProperty('--path-color', colorVar(path[1]) || 'var(--accent)');
     renderLayers(newLayer);
     renderOutput();
     drawEdges();
@@ -321,7 +329,7 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
   }
 
   .net-edge.is-path {
-    stroke: var(--accent);
+    stroke: var(--path-color, var(--accent));
     stroke-width: 1.5;
   }
 
@@ -380,10 +388,11 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
     border-color: var(--muted);
   }
 
+  /* Selected: a light tint of the branch colour (grey for the input node). */
   .net-node[aria-current='true'] {
-    border-color: var(--ink);
-    background: var(--ink);
-    color: var(--paper);
+    border-color: var(--node-color, var(--muted));
+    background: color-mix(in srgb, var(--node-color, var(--muted)) 10%, var(--surface));
+    font-weight: 500;
   }
 
   .net-node-icon,
@@ -391,6 +400,10 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
   .net-link-icon {
     display: inline-flex;
     flex: none;
+  }
+
+  .net-node-icon {
+    color: var(--node-color, currentColor);
   }
 
   .net-node-icon svg {
@@ -415,6 +428,17 @@ const json = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c');
     border: 1px solid var(--rule);
     border-radius: 12px;
     background: var(--surface);
+  }
+
+  /* Square chip in the branch colour, as a category marker. */
+  .net-output-kicker::before {
+    content: '';
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-right: 0.5rem;
+    border-radius: 2px;
+    background: var(--node-color);
   }
 
   .net-output-title {

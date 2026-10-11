@@ -6,6 +6,8 @@ import { getLanguageCounts, getRepo, getRepos } from './github';
 // The home page network. It is generated from the same content and data files as the rest of
 // the site, so a new project or post shows up as a node without touching this file.
 
+export type NetColor = 'blue' | 'green' | 'orange' | 'purple' | 'red';
+
 export interface NetLink {
   label: string;
   href: string;
@@ -15,6 +17,8 @@ export interface NetNode {
   id: string;
   label: string;
   icon: string;
+  // Category colour for a top-level branch; its descendants inherit it.
+  color?: NetColor;
   title: string;
   meta?: string;
   text?: string[];
@@ -62,6 +66,7 @@ function backgroundNode(): NetNode {
     id: 'background',
     label: 'Background',
     icon: 'briefcase',
+    color: 'purple',
     title: 'Background',
     text: ['Where I have worked, what I studied and what I have published. Pick a role for the detail.'],
     links: [{ label: 'Full history', href: '/about/' }],
@@ -116,6 +121,7 @@ async function projectsNode(): Promise<NetNode> {
     id: 'projects',
     label: 'Projects',
     icon: 'cube',
+    color: 'blue',
     title: 'Projects',
     text: ['Things I have built, mostly to understand how something works. Pick a group.'],
     links: [{ label: 'All projects', href: '/projects/' }],
@@ -156,6 +162,7 @@ async function writingNode(): Promise<NetNode> {
     id: 'writing',
     label: 'Writing',
     icon: 'pencil-simple',
+    color: 'orange',
     title: 'Writing',
     text: ['Essays, notes on papers, and the maths behind the machine learning.'],
     children,
@@ -171,6 +178,7 @@ async function githubNode(): Promise<NetNode> {
     id: 'github',
     label: 'GitHub',
     icon: 'github-logo',
+    color: 'green',
     title: 'On GitHub',
     text:
       repos.length > 0
@@ -195,6 +203,7 @@ function contactNode(): NetNode {
     id: 'contact',
     label: 'Contact',
     icon: 'envelope-simple',
+    color: 'red',
     title: 'Get in touch',
     text: ['Email is the best way to reach me.'],
     links: [

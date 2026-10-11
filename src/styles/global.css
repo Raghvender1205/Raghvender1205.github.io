@@ -16,7 +16,7 @@
   font-display: swap;
 }
 
-/* Palette: neutral greys and one accent. Dark values follow the system setting. */
+/* Palette: neutral greys and one accent. The site is light only, whatever the system setting. */
 :root {
   color-scheme: light;
   --paper: #f7f7f8;
@@ -25,18 +25,12 @@
   --muted: #66666c;
   --rule: #dedee2;
   --accent: #1062fe;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --paper: #111213;
-    --surface: #18191b;
-    --ink: #f2f4f7;
-    --muted: #a9b0ba;
-    --rule: #36373b;
-    --accent: #7fa9ff;
-  }
+  /* Category colours, one per branch of the home page network. */
+  --cat-blue: #2f7cf6;
+  --cat-green: #1f9d61;
+  --cat-orange: #d9731a;
+  --cat-purple: #6e56cf;
+  --cat-red: #e4402c;
 }
 
 @theme inline {
@@ -175,12 +169,4 @@
   overflow-x: auto;
   overflow-y: hidden;
   padding-block: 0.25rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  .astro-code,
-  .astro-code span {
-    color: var(--shiki-dark) !important;
-    background-color: var(--shiki-dark-bg) !important;
-  }
 }

@@ -12,9 +12,7 @@ export default defineConfig({
   markdown: {
     // remark/rehype pipeline, for LaTeX maths rendered with KaTeX
     processor: unified({ remarkPlugins: [remarkMath], rehypePlugins: [rehypeKatex] }),
-    shikiConfig: {
-      themes: { light: 'github-light', dark: 'github-dark' },
-    },
+    shikiConfig: { theme: 'github-light' },
   },
   // URLs of the old hand-written pages
   redirects: {
