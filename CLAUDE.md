@@ -62,6 +62,7 @@ There is no test suite or linter. `npm run build` is the check: it validates eve
 | `src/components/NetworkNav.astro` | The network: markup, client script and styles |
 | `src/styles/global.css` | Colour tokens, fonts, `.label` and `.link`, Markdown prose styles |
 | `public/fonts/` | Overused Grotesk and Departure Mono, with their licences |
+| `public/og.png` | Link preview card (1200 × 630) used by every page. It is a static image, so redraw it if the name or tagline on it changes |
 | `.github/workflows/deploy.yml` | Build and deploy on push to `master`, plus a weekly rebuild |
 
 ## Adding content
