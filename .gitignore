@@ -3,3 +3,6 @@ dist/
 .astro/
 .env
 .DS_Store
+
+# Raw notes for site copy; not published
+/content/

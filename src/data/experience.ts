@@ -1,5 +1,5 @@
 // Work history, education and publications. Newest first.
-// The home page shows the first three highlights of each role; the About page shows all of them.
+// The home page shows the first four highlights of each role; the About page shows all of them.
 
 export interface Role {
   title: string;
@@ -16,9 +16,14 @@ export const experience: Role[] = [
     start: 'Apr 2026',
     end: 'Present',
     highlights: [
-      'Lead LLM and agent work.',
-      'Designed the system architecture for agent systems used inside the organisation, and built them out.',
-      'Mentor engineers and review designs and code.',
+      'Lead LLM and agent work: I design the architecture for the agent systems used inside the organisation, build them out, and mentor engineers and review designs and code.',
+      'Built an LLM gateway with role-based access control, budgets and scoping across multiple LLM providers. It also serves remote agents as models, with tool calling, skills and reasoning, through a no-code platform where teams create their own agents.',
+      'Optimised the codebase indexing engine I started as SDE-1. It indexes internal codebases into knowledge graphs, served over MCP so that AI agents and code review agents can look up and verify cross-file context. The MCP server keeps the graph fresh itself: it checks git fetch for new commits and reindexes.',
+      'Built an internal PR review agent, begun during the move from SDE-1, that reviews code with repository-specific context and checklists, with git hooks that review code before it is pushed, for developers and coding agents alike. Added a vulnerability scanner and a font scanner that flags any font in a repository not under a licence such as MIT or Apache.',
+      'Added prompt compression to the gateway for prompt inputs, integrated Headroom AI to compress tool outputs, and used Temporal to make LangGraph agents resumable.',
+      'Built a website bot where customers ask product questions and get recommendations. It is a store-specific module that integrates across HealthKart’s stores, with Redis semantic caching, a model router and suggested questions based on the product page.',
+      'Built an A/B experimentation framework that modifies responses in Spring Cloud Gateway, with an agent-facing interface and a UI where engineers and non-technical staff create experiments and see the results.',
+      'Designed the cache that buckets users for the experimentation framework: Redis Functions with a hybrid of Redis and a backfilled Caffeine cache, integrated into Spring Cloud Gateway. It serves live traffic with an effect of 1–2 ms on API response time.',
     ],
   },
   {
@@ -34,7 +39,7 @@ export const experience: Role[] = [
       'Created and maintained Spring Boot REST APIs for payment link generation and verification.',
       'Enhanced OpenWebUI with custom PDF table parsing and RAG improvements: semantic chunking, reranking and metadata filtering.',
       'Developed a distributed event logging system in Spring Boot on AWS Kinesis producer and consumer streams.',
-      'Built a database AI agent that handles customer support queries, integrated via MCP.',
+      'Built a customer support agent that resolves user queries through MCP tool calls against the database. It runs in copilot mode today and is being moved to end users.',
       'Implemented a company-wide pull request code review pipeline.',
       'Created a synthetic dataset generator for fine-tuning LLMs on e-commerce question answering.',
       'Built a Python JSON preprocessor that converts complex nested structures into an LLM-friendly format, deployed as a GPT plugin for MuscleBlaze search, coupons and returns.',
