@@ -13,11 +13,11 @@ const caseStudy = hasBody(project) ? `/projects/${project.id}/` : undefined;
 const repoUrl = repo ? `https://github.com/${repo}` : undefined;
 ---
 
-<article class="flex flex-col border-t border-rule pt-5">
-  <h3 class="text-xl font-semibold leading-snug tracking-tight">
+<article class="flex flex-col rounded-lg border border-rule p-5 transition-colors duration-200 hover:border-muted">
+  <h3 class="font-medium leading-snug">
     {caseStudy ? <a class="link" href={caseStudy}>{title}</a> : title}
   </h3>
-  <p class="mt-2 text-muted">{summary}</p>
+  <p class="mt-1.5 text-muted">{summary}</p>
 
   {
     stack.length > 0 && (

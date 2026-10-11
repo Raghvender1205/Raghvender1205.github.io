@@ -10,7 +10,7 @@ const languages = await getLanguageCounts();
 
 {
   repos.length === 0 ? (
-    <p class="italic text-muted">
+    <p class="text-muted">
       See <a class="link" href={`https://github.com/${site.githubUser}`}>github.com/{site.githubUser}</a>.
     </p>
   ) : (
@@ -20,7 +20,7 @@ const languages = await getLanguageCounts();
         <ul>
           {recent.map((repo) => (
             <li class="flex flex-wrap items-baseline justify-between gap-x-6 border-t border-rule py-3">
-              <a class="link font-semibold" href={repo.url} rel="noopener">{repo.name}</a>
+              <a class="link font-medium" href={repo.url} rel="noopener">{repo.name}</a>
               <span class="label">
                 {repo.language && `${repo.language} · `}
                 {formatMonth(repo.pushedAt)}

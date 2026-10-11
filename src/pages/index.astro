@@ -1,70 +1,20 @@
 ---
 import Base from '../layouts/Base.astro';
-import SectionHeading from '../components/SectionHeading.astro';
-import ProjectCard from '../components/ProjectCard.astro';
-import EntryList from '../components/EntryList.astro';
-import Timeline from '../components/Timeline.astro';
-import GithubPanel from '../components/GithubPanel.astro';
+import NetworkNav from '../components/NetworkNav.astro';
 import { profile } from '../data/site';
-import { getProjects, getWriting } from '../lib/content';
-
-const featured = (await getProjects()).filter((project) => project.data.featured);
-const latest = (await getWriting()).slice(0, 5);
 ---
 
-<Base>
-  <section class="grid gap-x-14 gap-y-10 pt-12 md:grid-cols-[1fr_19rem] md:pt-16">
-    <div>
-      <p class="label">{profile.role} · {profile.company} · {profile.location}</p>
-      <h1 class="mt-4 text-4xl font-semibold leading-[1.1] tracking-tight sm:text-5xl">
-        I build machine learning systems, from the model down to the database.
-      </h1>
-      {profile.intro.map((paragraph) => <p class="mt-5 text-xl leading-relaxed">{paragraph}</p>)}
-      <ul class="mt-8 flex flex-wrap gap-x-6 gap-y-2">
-        <li><a class="link font-semibold" href={`mailto:${profile.email}`}>{profile.email}</a></li>
-        {profile.resumeUrl && <li><a class="link" href={profile.resumeUrl}>Resume (PDF)</a></li>}
-        {
-          profile.links.slice(0, 2).map((link) => (
-            <li><a class="link" href={link.href} rel="me noopener">{link.label} ↗</a></li>
-          ))
-        }
-      </ul>
-    </div>
-
-    <aside class="self-start border border-rule bg-surface p-5" aria-label="At a glance">
-      <p class="label">At a glance</p>
-      <dl class="mt-2">
-        {
-          profile.glance.map((fact) => (
-            <div class="border-t border-rule py-3 first:border-t-0">
-              <dt class="label">{fact.term}</dt>
-              <dd class="mt-0.5 leading-snug">{fact.detail}</dd>
-            </div>
-          ))
-        }
-      </dl>
-    </aside>
+<Base wide>
+  <section class="max-w-3xl pt-12 sm:pt-16">
+    <p class="label">{profile.role} · {profile.company} · {profile.location}</p>
+    <h1 class="mt-4 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
+      I build machine learning systems, from the model down to the database.
+    </h1>
+    <p class="mt-4 text-lg leading-relaxed text-muted">{profile.intro[0]}</p>
   </section>
 
-  <section class="mt-20">
-    <SectionHeading number="01" title="Selected work" more={{ label: 'All projects', href: '/projects/' }} />
-    <div class="grid gap-x-12 gap-y-8 md:grid-cols-2">
-      {featured.map((project) => <ProjectCard project={project} />)}
-    </div>
-  </section>
-
-  <section class="mt-20">
-    <SectionHeading number="02" title="Experience" more={{ label: 'Full history', href: '/about/' }} />
-    <Timeline limit={3} />
-  </section>
-
-  <section class="mt-20">
-    <SectionHeading number="03" title="Writing" more={{ label: 'Blog', href: '/blog/' }} />
-    <EntryList entries={latest} showSection empty="Posts, research notes and maths write-ups will appear here." />
-  </section>
-
-  <section class="mt-20">
-    <SectionHeading number="04" title="On GitHub" />
-    <GithubPanel />
+  <section class="mt-10">
+    <p class="label mb-3">Select a node to move through the network. Arrow keys work too.</p>
+    <NetworkNav />
   </section>
 </Base>

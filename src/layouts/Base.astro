@@ -1,7 +1,6 @@
 ---
-import '@fontsource-variable/newsreader/wght.css';
-import '@fontsource-variable/newsreader/wght-italic.css';
-import '@fontsource-variable/jetbrains-mono';
+import '@fontsource/ibm-plex-mono/latin-400.css';
+import '@fontsource/ibm-plex-mono/latin-500.css';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -10,9 +9,11 @@ import { site } from '../data/site';
 interface Props {
   title?: string;
   description?: string;
+  // Use the full page width (the home page network needs it).
+  wide?: boolean;
 }
 
-const { title, description = site.description } = Astro.props;
+const { title, description = site.description, wide = false } = Astro.props;
 const pageTitle = title ? `${title} · ${site.title}` : `${site.title} · Machine Learning Engineer`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -26,6 +27,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" href="/fonts/OverusedGrotesk-VF.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="alternate" type="application/rss+xml" title={site.title} href="/rss.xml" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
@@ -59,8 +61,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       Skip to content
     </a>
     <Header />
-    <main id="main" class="mx-auto w-full max-w-5xl flex-1 px-5 pb-24 sm:px-8">
-      <slot />
+    <main id="main" class="mx-auto w-full max-w-6xl flex-1 px-5 pb-24 sm:px-8">
+      <div class={wide ? undefined : 'max-w-3xl'}>
+        <slot />
+      </div>
     </main>
     <Footer />
   </body>

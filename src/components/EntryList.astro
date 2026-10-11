@@ -14,17 +14,17 @@ const { entries, showSection = false, empty = 'Nothing published here yet.' } = 
 
 {
   entries.length === 0 ? (
-    <p class="italic text-muted">{empty}</p>
+    <p class="text-muted">{empty}</p>
   ) : (
     <ul>
       {entries.map((entry) => (
-        <li class="grid gap-x-8 gap-y-1 border-t border-rule py-5 sm:grid-cols-[9rem_1fr]">
-          <p class="label sm:pt-1.5">
+        <li class="grid gap-x-8 gap-y-1 border-t border-rule py-5 sm:grid-cols-[8.5rem_1fr]">
+          <p class="label sm:pt-0.5">
             <time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
             {showSection && <span class="block">{sections[entry.section].label}</span>}
           </p>
           <div>
-            <h3 class="text-xl font-semibold leading-snug tracking-tight">
+            <h3 class="font-medium leading-snug">
               <a class="link" href={writingHref(entry)} rel={entry.data.external ? 'noopener' : undefined}>
                 {entry.data.title}
                 {entry.data.external && ' ↗'}

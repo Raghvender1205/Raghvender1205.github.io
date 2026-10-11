@@ -12,16 +12,16 @@ const { limit } = Astro.props;
 <ol>
   {
     experience.map((role) => (
-      <li class="grid gap-x-8 gap-y-1 border-t border-rule py-5 sm:grid-cols-[9rem_1fr]">
-        <p class="label sm:pt-1.5">
+      <li class="grid gap-x-8 gap-y-1 border-t border-rule py-5 sm:grid-cols-[8.5rem_1fr]">
+        <p class="label sm:pt-0.5">
           {role.start} – {role.end}
         </p>
         <div>
-          <h3 class="text-xl font-semibold leading-snug tracking-tight">
+          <h3 class="font-medium leading-snug">
             {role.title}
-            <span class="font-normal italic text-muted">, {role.org}</span>
+            <span class="font-normal text-muted">, {role.org}</span>
           </h3>
-          <ul class="mt-2 list-disc space-y-1 pl-5 marker:text-rule">
+          <ul class="mt-2 list-disc space-y-1 pl-5 marker:text-muted">
             {role.highlights.slice(0, limit).map((highlight) => (
               <li>{highlight}</li>
             ))}

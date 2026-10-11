@@ -1,0 +1,12 @@
+---
+import { icon } from '../lib/icons';
+
+interface Props {
+  name: string;
+  class?: string;
+}
+
+const { name, class: className = 'size-4' } = Astro.props;
+---
+
+<span class:list={['inline-flex shrink-0 [&>svg]:size-full', className]} set:html={icon(name)} />

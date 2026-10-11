@@ -5,9 +5,9 @@ const path = Astro.url.pathname;
 const isCurrent = (href: string) => path.startsWith(href);
 ---
 
-<header class="mx-auto w-full max-w-5xl px-5 pt-8 sm:px-8">
-  <div class="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 border-b border-ink pb-4">
-    <a href="/" class="text-2xl font-semibold tracking-tight" aria-label={`${site.title}, home`}>
+<header class="mx-auto w-full max-w-6xl px-5 pt-8 sm:px-8">
+  <div class="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 pb-2">
+    <a href="/" class="font-semibold tracking-tight" aria-label={`${site.title}, home`}>
       {site.title}
     </a>
     <nav aria-label="Main">
