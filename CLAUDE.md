@@ -25,16 +25,18 @@ These are instructions Raghvender has given. Follow them unless he says otherwis
 
 - **Structure before content.** Adding a project, post or note must stay a matter of adding one Markdown file. Do not introduce a design that needs code changes per item.
 - **Main audience: recruiters hiring ML/AI engineers.** He also wants the site to speak to backend/systems, ML-systems and research readers, but ML/AI engineering leads.
-- **Ask him rather than guess.** For anything about his career, roles or opinions that is not in the repo, ask. He has offered to answer questions and to write up his MLE-2 work in detail.
+- **Ask him rather than guess.** For anything about his career, roles or opinions that is not in the repo, ask. He answers questions in chat and drops rough notes in `content/` at the repo root (git-ignored, never committed or published). Where his notes are ambiguous, leave the point out and ask rather than fill it in.
 - **Never invent facts or numbers.** Case studies are drafted from the actual repo code, README and commit history. Measurements must come from running the code; if there are none, say so in the text.
-- **HealthKart work:** the resume bullets may be used as written. Beyond that, show public repositories only. Do not name private repos, internal code, data or metrics.
+- **HealthKart work:** the resume bullets may be used as written, and so may what he has written up himself for the site (the role highlights in `src/data/experience.ts`, including the 1–2 ms figure for the experimentation cache). Beyond that, show public repositories only. Do not name private repos, internal code or data, and do not add metrics he has not given.
 - **Contact:** show the email address. Do not publish his phone number.
 - **LinkedIn cannot be read automatically** and he does not want it scraped. If profile data is needed, ask him.
 
 ### Known facts
 
 - Roles at HealthKart: AI Intern (Sep 2023), SDE-1 (Aug 2024), MLE-2 (Apr 2026 to present), promoted straight from SDE-1.
-- As MLE-2 he leads LLM and agent work, built the agent systems and their architecture inside the organisation, and mentors and reviews.
+- He is based in Gurgaon, Haryana, India.
+- As MLE-2 he leads LLM and agent work, built the agent systems and their architecture inside the organisation, and mentors and reviews. The work he has cleared for the site: an LLM gateway (RBAC, budgets, scoping, remote agents as models, a no-code agent platform, prompt compression, Headroom AI for tool outputs, Temporal for resumable LangGraph agents), the knowledge-graph codebase parser and indexing engine served over MCP, the PR review agent with its git hooks and vulnerability and font-licence scanners, the store-specific website bot, and the A/B experimentation framework in Spring Cloud Gateway with its Redis and Caffeine cache.
+- Which role each item belongs to, as he has stated it: the customer support agent was built as SDE-1; the PR review agent was built during the move from SDE-1 to MLE-2 (the SDE-1 entry keeps the earlier review pipeline bullet); the codebase parser is listed under MLE-2 only.
 - His resume PDF is out of date (it still says SDE-1), so `profile.resumeUrl` is empty and the site shows no resume link.
 
 ## Commands
@@ -55,7 +57,8 @@ There is no test suite or linter. `npm run build` is the check: it validates eve
 | `src/content/blog/`, `notes/`, `maths/` | Writing, one file per piece |
 | `src/content.config.ts` | Frontmatter schemas for the above |
 | `src/data/site.ts` | Profile, intro, links, navigation, project groups, writing sections |
-| `src/data/experience.ts` | Work history, education, publications |
+| `src/data/experience.ts` | Work history, education, publications. The network shows the first four highlights of each role, so order them by importance |
+| `content/` | His raw notes for site copy. Git-ignored; not the same as `src/content/` |
 | `src/lib/network.ts` | Builds the home page network and the forward-pass tour from content and data |
 | `src/lib/github.ts` | Fetches public repos from the GitHub API at build time |
 | `src/lib/content.ts` | Collection queries, draft filtering, date formatting |

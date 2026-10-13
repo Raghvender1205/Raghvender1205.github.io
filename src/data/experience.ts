@@ -18,7 +18,7 @@ export const experience: Role[] = [
     highlights: [
       'Lead LLM and agent work: I design the architecture for the agent systems used inside the organisation, build them out, and mentor engineers and review designs and code.',
       'Built an LLM gateway with role-based access control, budgets and scoping across multiple LLM providers. It also serves remote agents as models, with tool calling, skills and reasoning, through a no-code platform where teams create their own agents.',
-      'Optimised the codebase indexing engine I started as SDE-1. It indexes internal codebases into knowledge graphs, served over MCP so that AI agents and code review agents can look up and verify cross-file context. The MCP server keeps the graph fresh itself: it checks git fetch for new commits and reindexes.',
+      'Engineered a codebase parser with embedding and indexing support, integrated with LangGraph for retrieval. It uses knowledge graphs: internal codebases are indexed into them and served over MCP so that AI agents and code review agents can look up and verify cross-file context. The MCP server keeps the graph fresh itself: it checks git fetch for new commits and reindexes.',
       'Built an internal PR review agent, begun during the move from SDE-1, that reviews code with repository-specific context and checklists, with git hooks that review code before it is pushed, for developers and coding agents alike. Added a vulnerability scanner and a font scanner that flags any font in a repository not under a licence such as MIT or Apache.',
       'Added prompt compression to the gateway for prompt inputs, integrated Headroom AI to compress tool outputs, and used Temporal to make LangGraph agents resumable.',
       'Built a website bot where customers ask product questions and get recommendations. It is a store-specific module that integrates across HealthKart’s stores, with Redis semantic caching, a model router and suggested questions based on the product page.',
@@ -43,7 +43,6 @@ export const experience: Role[] = [
       'Implemented a company-wide pull request code review pipeline.',
       'Created a synthetic dataset generator for fine-tuning LLMs on e-commerce question answering.',
       'Built a Python JSON preprocessor that converts complex nested structures into an LLM-friendly format, deployed as a GPT plugin for MuscleBlaze search, coupons and returns.',
-      'Engineered a codebase parser with embedding and indexing support, integrated with LangGraph for retrieval.',
     ],
   },
   {
